@@ -1,0 +1,47 @@
+
+setwd("~/Desktop/coursera/plott")
+
+library("data.table")
+
+FullSet <- read.table(":/Users/alra0004/Downloads/household_power_consumption.txt", skip=1 ,sep=";")
+names(FullSet) <- c("Date","Time","Global_active_power","Global_reactive_power","Voltage","Global_intensity","Sub_metering_1","Sub_metering_2","Sub_metering_3")
+TwoDaysOnly <- subset(FullSet, FullSet$Date=="1/2/2007" | FullSet$Date =="2/2/2007")
+
+Plot1
+
+GlobalActivePower <- as.numeric(TwoDaysOnly$Global_active_power)
+png("plot1.png", width=480, height=480)
+hist(GlobalActivePower, col="red", main="Global Active Power", xlab="Global Active Power (kilowatts)")
+dev.off()
+
+library("data.table")
+
+GAP <- data.table::fread(input = "household_power_consumption.txt"
+                         , na.strings="?"
+)
+
+GAP[, DateTime := as.POSIXct(paste(Date, Time), format = "%d/%m/%Y %H:%M:%S")]
+
+TwoDaysOnly <- GAP[(DateTime >= "2007-02-01") & (DateTime < "2007-02-03")]
+
+png("plot2.png", width=480, height=480)
+
+plot(x = TwoDaysOnly$DateTime, y = TwoDaysOnly$Global_active_power, type = "l", xlab = "", ylab="Global Active Power (kilowatts)")
+dev.off()
+
+library("data.table")
+
+GAP <- data.table::fread(input = "household_power_consumption.txt"
+                             , na.strings="?"
+)
+
+png("plot3.png", width=480, height=480)
+
+plot(TwoDaysOnly$DateTime, TwoDaysOnly$Sub_metering_1, type = "l", xlab = "", ylab = "Energy sub metering")
+lines(TwoDaysOnly$DateTime, TwoDaysOnly$Sub_metering_2, col = "red")
+lines(TwoDaysOnly$DateTime, TwoDaysOnly$Sub_metering_3, col = "blue")
+legend("topright"
+       , col=c("black","red","blue")
+       , c("Sub_metering_1  ","Sub_metering_2  ", "Sub_metering_3  ")
+       ,lty=c(1,1), lwd=c(1,1))
+dev.off() 
